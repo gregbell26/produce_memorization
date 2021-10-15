@@ -5,15 +5,17 @@ let currentProduceItem = null;
 function setStreak(value){
     document.getElementById("app_streak_counter").children[0].innerHTML = value.toString();
 }
+
 function checkInput() {
-    if(document.getElementById("question_input").children[0].value === currentProduceItem.code){
+    if(document.getElementById("input").value === currentProduceItem.code){
         document.getElementById("question_produce_number").style.display = "none";
-        document.getElementById("question_input").children[0].value = "";
+        document.getElementById("input").value = "";
         setStreak(parseInt(document.getElementById("app_streak_counter").children[0].innerHTML)+1)
         return true;
     }
+
     document.getElementById("question_produce_number").style.display = "block";
-    document.getElementById("question_input").children[0].value = "";
+    document.getElementById("input").value = "";
     setStreak(0);
     return false;
 }
@@ -34,13 +36,25 @@ function getNextItem() {
 
 
 document.getElementById("input").addEventListener('keypress', function (keyEvent){
-    if(keyEvent.key === "Enter"){
-        if(checkInput())
+    const key = keyEvent.key;
+
+    if((key === "Enter" || key === "+") && checkInput()){
             getNextItem();
-
-
     }
 })
 
+document.getElementById("input").addEventListener("keydown", function (keyEvent) {
+    const key = keyEvent.key;
+    // console.log(key);
 
-window.getNextItem = getNextItem();
+    if (key === "Backspace" || key === "Delete"){
+        document.getElementById("input").value = "";
+    }
+    else if (key === "*"){
+        document.getElementById("input").value = "";
+    }
+
+})
+
+
+getNextItem();
