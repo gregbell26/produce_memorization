@@ -1,4 +1,6 @@
 module.exports = async function (context, req) {
+    let test = process.env.TEST;
+    context.log(test)
     context.log('JavaScript HTTP trigger function processed a request.');
 
     const name = (req.query.name || (req.body && req.body.name));
