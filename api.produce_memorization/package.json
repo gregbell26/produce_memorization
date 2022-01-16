@@ -3,7 +3,7 @@
   "version": "2.0",
   "description": "",
   "scripts": {
-    "run": "swa start ../src --api-location ./api.produce_memorization"
+    "run": "swa start ../src --api-location api.produce_memorization"
   },
   "author": "TriHard Studios",
   "dependencies": {

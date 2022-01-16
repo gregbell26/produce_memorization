@@ -1,6 +1,23 @@
+const https = require("https");
+
+
+async function getDate(_endpoint, _apiKey){
+    const authenticatedEndpoint = _endpoint + "?code=" + _apiKey;
+    // add error handling
+    return new Promise(resolve => {
+        let data = "";
+        https.get(authenticatedEndpoint, res => {
+            res.on('data', (chunk) =>  (data += chunk));
+            res.on('end', () => resolve(data));
+        })
+    })
+}
+
+async
+
+
 module.exports = async function (context, req) {
-    let test = process.env.TEST;
-    context.log('JavaScript HTTP trigger function processed a request.');
+    const data = req.body.data;
 
     const name = (req.query.name || (req.body && req.body.name));
     const responseMessage = name
