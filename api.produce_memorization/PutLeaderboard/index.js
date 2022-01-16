@@ -12,7 +12,7 @@ async function getCurrentLeaderboard(_endpoint, _apiKey){
             res.on('data', (chunk) =>  (data += chunk));
             res.on('end', () => resolve(data));
         })
-    })
+    });
 }
 
 

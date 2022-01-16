@@ -1,7 +1,7 @@
 const https = require("https");
 
 
-async function getDate(_endpoint, _apiKey){
+async function getData(_endpoint, _apiKey){
     const authenticatedEndpoint = _endpoint + "?code=" + _apiKey;
     // add error handling
     return new Promise(resolve => {
@@ -10,23 +10,34 @@ async function getDate(_endpoint, _apiKey){
             res.on('data', (chunk) =>  (data += chunk));
             res.on('end', () => resolve(data));
         })
-    })
+    });
 }
 
-async
+async function putData(_endpoint, _apiKey, _data){
+    const authenticatedEndpoint = _endpoint + "?code=" + _apiKey;
+    const req = https.request(authenticatedEndpoint, res => {res.on('end', () => console.log("CHIMP"))});
+    req.write(_data);
+    console.log("YOUR MOTHER")
+    req.end();
+}
 
 
 module.exports = async function (context, req) {
-    const data = req.body.data;
+    // const data = req.body.data;
 
     const name = (req.query.name || (req.body && req.body.name));
     const responseMessage = name
         ? "Hello, " + name + ". This HTTP triggered function executed successfully."
         : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.";
 
+    await putData(process.env.PutLeaderboardEndpoint, process.env.PutLeaderboardKey, JSON.stringify({
+        initials: "GJB",
+        points: 1001
+    }));
+
     context.res = {
         // status: 200, /* Defaults to 200 */
-        body: responseMessage
+        body: await getData(process.env.GetPLUCodesEndpoint, process.env.GetPLUCodesKey)
     };
 
 }
