@@ -21,23 +21,27 @@ module.exports = async function (context, req) {
     const database = client.database("produce-memorization");
     const leaderBoardContainer = database.container("Leaderboard");
 
-    const data = req.body.data;
+    const data = req.body;
+
     const curLeaderboard = await getCurrentLeaderboard(process.env.GetLeaderboardEndpoint, process.env.GetLeaderboardKey);
     let leaderboard = JSON.parse(curLeaderboard).leaderboard;
 
     // We are adding data to the array, then sorting, then chopping the lowest lad off.
     leaderboard.push(data)
 
+    // sorting by points in ascending order.
     leaderboard.sort((a,b) => {
         return ((a['points'] > b['points']) ? -1 : ((a['points'] < b['points']) ? 1 : 0));
     })
 
+    // thanos snap the last boi off
     leaderboard.splice(5);
 
     await leaderBoardContainer.item("top-5")
         .replace({id: "top-5", "leaderboard": leaderboard});
 
     context.res = {
-        // status: 200, /* Defaults to 200 */
-    };
+
+    }
+
 }

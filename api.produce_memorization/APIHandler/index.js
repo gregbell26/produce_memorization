@@ -15,29 +15,61 @@ async function getData(_endpoint, _apiKey){
 
 async function putData(_endpoint, _apiKey, _data){
     const authenticatedEndpoint = _endpoint + "?code=" + _apiKey;
-    const req = https.request(authenticatedEndpoint, res => {res.on('end', () => console.log("CHIMP"))});
-    req.write(_data);
-    console.log("YOUR MOTHER")
+    const dataString = _data;
+
+    const options = {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': dataString.length
+        }
+    }
+    const req = https.request(authenticatedEndpoint, options, (res) => {
+
+        res.on("end", () => {console.log("Put finished")})
+    })
+    req.write(dataString);
     req.end();
+
 }
+
+/*
+{
+    command: ""
+    data: ""
+    client: ""
+}
+
+ */
 
 
 module.exports = async function (context, req) {
-    // const data = req.body.data;
+    const data = req.body;
+    let res = {
+        status: "FAILURE",
+        data: {}
+    };
+    if (data.command === "getAvailableCodes"){
+        res.data = await getData(process.env.GetPLUCodesEndpoint, process.env.GetPLUCodesKey);
+        res.status = "SUCCESS";
 
-    const name = (req.query.name || (req.body && req.body.name));
-    const responseMessage = name
-        ? "Hello, " + name + ". This HTTP triggered function executed successfully."
-        : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.";
+    }
+    else if (data.command === "getCurrentLeaderboard"){
+        res.data = await getData(process.env.GetLeaderboardEndpoint, process.env.GetLeaderboardKey);
+        res.status = "SUCCESS";
+    }
+    else if (data.command === "updateLeaderboard"){
+        await putData(process.env.PutLeaderboardEndpoint, process.env.PutLeaderboardKey, JSON.stringify(data.data))
+        res.status = "SUCCESS";
+    }
+    else {
+        res.status = "FAILURE";
+        res.msg = "Unknown Command";
+    }
 
-    await putData(process.env.PutLeaderboardEndpoint, process.env.PutLeaderboardKey, JSON.stringify({
-        initials: "GJB",
-        points: 1001
-    }));
 
     context.res = {
-        // status: 200, /* Defaults to 200 */
-        body: await getData(process.env.GetPLUCodesEndpoint, process.env.GetPLUCodesKey)
+        body: res
     };
 
 }
