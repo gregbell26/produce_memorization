@@ -1,4 +1,4 @@
 local.settings.json
-api.produce_memorization/package-lock.json
 .idea/
 node_modules/
+.DS_Store
